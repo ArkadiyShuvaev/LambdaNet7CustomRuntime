@@ -1,12 +1,9 @@
 {
   "profiles": {
-    "Debug Lambda": {
-      "commandName": "Executable",
-      "executablePath": "%USERPROFILE%\\.dotnet\\tools\\dotnet-lambda-test-tool-7.0.exe",
-      "commandLineArgs": "--port 5550 --no-ui --payload debug.json",
-      "workingDirectory": ".\\bin\\$(Configuration)\\net7.0\\win-x64",
+    "Lambda Runtime API": {
+      "commandName": "Project",
       "environmentVariables": {
-        "AWS_LAMBDA_RUNTIME_API": "localhost:5550",
+        "AWS_LAMBDA_RUNTIME_API": "localhost:5050",
         "AWS_PROFILE": "private",
         "AWS_REGION": "eu-central-1"
       }
