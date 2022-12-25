@@ -1,3 +1,4 @@
+using Amazon.Lambda.ApplicationLoadBalancerEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
@@ -12,16 +13,21 @@ public class Function
     /// <param name="args"></param>
     private static async Task Main(string[] args)
     {
-        Func<string, ILambdaContext, string> handler = FunctionHandler;
-        await LambdaBootstrapBuilder.Create(handler, new DefaultLambdaJsonSerializer())
+        Func<ApplicationLoadBalancerRequest, ILambdaContext, Task<ApplicationLoadBalancerResponse>> handler = FunctionHandlerAsync;
+        await LambdaBootstrapBuilder.Create(handler, new SourceGeneratorLambdaJsonSerializer<HttpApiJsonSerializerContext>())
             .Build()
             .RunAsync();
     }
 
-    public static string FunctionHandler(string input, ILambdaContext context)
+    public static async Task<ApplicationLoadBalancerResponse> FunctionHandlerAsync(ApplicationLoadBalancerRequest request, ILambdaContext context)
     {
         var architecture = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture;
         var dotnetVersion = Environment.Version.ToString();
-        return $"Architecture: {architecture}, .NET Version: {dotnetVersion} -- {input?.ToUpper()}";
+
+        return new ApplicationLoadBalancerResponse
+        {
+            Body = $"Architecture: {architecture}, .NET Version: {dotnetVersion} -- {request?.Body.ToUpper()}",
+            StatusCode = 200
+        };
     }
 }
